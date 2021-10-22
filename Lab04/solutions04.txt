@@ -1,0 +1,20 @@
+1. A or B and C or D
+A or B and C or D
+A or (B and C) or D
+A or D or (B and C)
+
+2. A or B or C and D
+A or B or C and D
+A or B or (C and D)
+
+3. A or B or C and D or E
+A or B or C and D or E
+A or B or (C and D) or E
+A or B or E or (C and D)
+
+4. not A and B or not C and D
+not A and B or not C and D
+((not A) and B) or ((not C) and D)
+
+5. A and B or not C
+(A and B) or (not C)
