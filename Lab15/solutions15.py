@@ -48,9 +48,8 @@ def q01a():
     # Get boolean array for holidays
     holidays = data[:, 5] == 1
 
-
     # Get arrays which hold our casual, registered, total_users
-    casual_users = data[:, 13 ]
+    casual_users = data[:, 13]
     registered_users = data[:, 14]
     total_users = data[:, 15]
 
@@ -163,9 +162,16 @@ def q01c():
     # read bikeSharing.csv into a numpy array
     data = np.genfromtxt("../dataset/bikeSharing.csv", delimiter=",")
 
+    # boolean result
     result = data[:, 13] > data[:, 14]
-    print(len(result))
-    print(len(data))
+    print(result)
+    days = (len(data[result]))
+    total_days = (len(data))
+
+    percent = days * 100 / total_days
+    # print(percent)
+    print(f"Percentage of days where casual users is greater than registered users: {percent}%.")
+
 
 
 def q01c_sol():
@@ -179,7 +185,136 @@ def q01c_sol():
     print("Percentage of time where causal users > registered", (len(data[result]) * 100.0) / len(data))
 
 
-# q01a()
+def q01d():
+    """In this question you should provide a new implementation of one of last week’s questions using array indexing. The
+    objective of this task is to investigate the impact of weather conditions on the popularity of the bike scheme. For
+    each of the 4 possible weather conditions calculate the average number of rental bikes.
+
+    Average number of bikes is 189.463087635
+    Average bikes for condition Clear is 204.869271883
+    Average bikes for condition Mist and Cloudy is 175.165492958
+    Average bikes for condition Light Rain is 111.579281184
+    Average bikes for condition Heavy Rain is 74.3333333333"""
+
+    # import numpy
+    import numpy as np
+
+    # read bikeSharing.csv into a numpy array
+    data = np.genfromtxt("../dataset/bikeSharing.csv", delimiter=",")
+    print(data.shape)
+
+    # get mean of column 15 which is total of bikes/day
+    bikes = data[:, 15]
+    mean_bikes = np.mean(bikes)
+
+    #    8, 9. + weathersit:
+    # column 8, weather situation
+    # slices for each condition
+    # 1: Clear, Few clouds, Partly cloudy, Partly cloudy
+    # 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
+    # 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds
+    # 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog
+    bool_clear = data[:, 8] == 1
+    bool_mist = data[:, 8] == 2
+    bool_light = data[:, 8] == 3
+    bool_heavy = data[:, 8] == 4
+
+    print(bool_clear)
+    print(bool_mist)
+    print(bool_light)
+    print(bool_heavy)
+
+    mean_clear = np.mean(bikes[bool_clear])
+    mean_mist = np.mean(bikes[bool_mist])
+    mean_light = np.mean(bikes[bool_light])
+    mean_heavy = np.mean(bikes[bool_heavy])
+    print(f"Average number of bikes is: {mean_bikes}")
+    print(f"Average number of bikes for condition clear: {mean_clear}")
+    print(f"Average number of bikes for condition mist: {mean_mist}")
+    print(f"Average number of bikes for condition light: {mean_light}")
+    print(f"Average number of bikes for condition heavy: {mean_heavy}")
+
+
+def q01e():
+    """
+    The objective of this question is to look at the relationship between temperature and the number of casual users.
+    Your code should work out the average number of casual users for the following temperature ranges:
+    1, 5
+    6, 10
+    11, 15
+    16, 20
+    21, 25
+    26, 30
+    31, 35
+    36, 40
+
+    Please note the temperature range specified in the file have been normalised by dividing by 41
+    The following is the sample output:
+    For temp in range 1 to 5 the mean number of casual users was 49.2954545455
+    For temp in range 6 to 10 the mean number of casual users was 73.6670630202
+    For temp in range 11 to 15 the mean number of casual users was 130.681770652
+    For temp in range 16 to 20 the mean number of casual users was 169.066772655
+    For temp in range 21 to 25 the mean number of casual users was 211.700074516
+    For temp in range 26 to 30 the mean number of casual users was 242.172678691
+    For temp in range 31 to 35 the mean number of casual users was 337.473005641
+    For temp in range 36 to 40 the mean number of casual users was 314.991111111
+    """
+    # import numpy
+    import numpy as np
+
+    # read bikeSharing.csv into a numpy array
+    data = np.genfromtxt("../dataset/bikeSharing.csv", delimiter=",")
+    # print(data.shape)
+
+    # get mean of column 13 which is casual users
+    casual_users = data[:, 13]
+
+    # column 9, temp normalized to 41
+    temp = data[:, 9] * 41
+    print(temp)
+    print(len(temp))
+    print(np.amax(temp))
+
+    def mean_users(low, high):
+        arr_low = temp >= low
+        # print(arr_low)
+        arr_high = temp <= high
+        # print(arr_high)
+        arr_combination = (arr_low & arr_high)
+        # print(arr_combination)
+        subset = casual_users[arr_combination]
+        # print((subset))
+        print(f"Temp range {low} to {high} mean users: {np.mean(subset)}")
+
+    mean_users(1, 5)
+    for t in range (1, 40, 5):
+        mean_users(t, t+4)
+
+
+def q01e_sol():
+    # import numpy
+    import numpy as np
+
+    # read bikeSharing.csv into a numpy array
+    data = np.genfromtxt("../dataset/bikeSharing.csv", delimiter=",")
+
+
+
+    def analyseTemp(data, minValue, maxValue):
+        # the temperature values stored in the array are multiplied by 41
+        higherTempCondition = (data[:, 9] * 41) >= minValue
+        lowerTempCondition = (data[:, 9] * 41) <= maxValue
+        subset = data[higherTempCondition & lowerTempCondition]
+        meanValue = np.mean(subset[:, 13])
+        print("For temp in range ", minValue, "to", maxValue, "the mean number of casual users was ", meanValue)
+
+
+    for temp in range(1, 40, 5):
+        analyseTemp(data, temp, temp + 4)
+
+
+
+q01a()
 # q01_sol()
-q01c()
+# q01e()
 # q01c_sol()

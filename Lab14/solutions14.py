@@ -133,7 +133,16 @@ def q06():
     """Question 6.
     Write a program that can print all the even days of August 2019.
     """
+    import numpy as np
 
+    import random as rnd
+
+    aug = np.arange('2019-08-01', '2019-09-01', dtype='datetime64[D]')
+    print(aug)
+    evenDays = aug[1::2]
+
+    for i in evenDays:
+        print(i)
 
 def q07():
     """Question 7.
@@ -143,4 +152,4 @@ def q07():
 
 # q01b()
 # q02()
-q05()
+q06()

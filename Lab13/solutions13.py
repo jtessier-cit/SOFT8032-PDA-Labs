@@ -65,12 +65,12 @@ def q03():
     data = np.genfromtxt('../dataset/bikeSharing.csv', dtype=float, delimiter=',')
 
     # slice data and get all of column index 1 (seasons), and get unique values
-    seasons = np.unique(data[:,1])
+    seasons = np.unique(data[:, 1])
     print(seasons)
 
-    uniqueValues, occurCount = numpy.unique(data, return_counts=True)
-    print("Unique Values : " , uniqueValues)
-    print("Occurrence Count : ", occurCount)
+    unique_values, occur_count = np.unique(data, return_counts=True)
+    print("Unique Values : ", unique_values)
+    print("Occurrence Count : ", occur_count)
 
     # slice data and get all of column index 1 (seasons), and get unique values
     seasons_set = set(data[:,1])
@@ -85,8 +85,9 @@ def q04():
     """
     data = np.genfromtxt('../dataset/bikeSharing.csv', dtype=float, delimiter=',')
 
-    print(np.min(data[:, 9]*41))
-    print(np.max(data[:, 9]*41))
+    print(np.amin(data[:, 9]*41))
+    print(np.amax(data[:, 9]*41))
     print(np.mean(data[:, 9]*41))
+
 
 q04()
