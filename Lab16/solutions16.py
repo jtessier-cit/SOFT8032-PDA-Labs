@@ -128,8 +128,19 @@ def q2i():
 
     attack_freq = df['Fatal'].value_counts
 
+def percent_fatal_country(df, country):
+    # print(country)
+    bool_country = df['Country'] == country
+    bool_fatal = df['Fatal']=="Y"
 
+    all_country = df[bool_country]
+    fatal_country =  df[bool_country & bool_fatal]
 
+    # print(country, len(all_country), len(fatal_country))
+    # if / 0 skip
+    if len(fatal_country) > 0:
+        percent = len(fatal_country) * 100 / len(all_country)
+        print(f"The percentage of fatal attacks: {country} {percent} ({len(fatal_country)}/{len(all_country)})")
 
 
 def q2ii():
@@ -149,11 +160,26 @@ def q2ii():
 
     # Get a list of countries using unique
     countries = pd.unique(df['Country'])
-    for country in countries:
-        print(country)
-        # get total attacks country
-        # get fatal attacks country
-        # print results
+    country_freq = df['Country'].value_counts()
+
+    print(country_freq.head(10))
+    for country in country_freq.keys():
+        percent_fatal_country(df, country)
+
+
+def attacks_year_country(country):
+    # get a boolean series for country
+    bool_country = df['Country'] == country
+
+    years_list = pd.unique(df['Year'])
+
+    for year in years_list:
+        if year>=1925 and year<=2015:
+            bool_year = df['Year'] == year
+            attacks_country_year = df[bool_country & bool_year]
+            print("------")
+            print(f"Number of attacks in {country} during {year} is {len(attacks_country_year)}")
+
 
 def q3i():
     """Question 3.
@@ -179,7 +205,7 @@ def q3i():
     ------
     Number of attacks in AUSTRALIA during 1924.0 is 6
     """
-
+    attacks_year_country("AUSTRALIA")
 
 # q1iv()
-q2ii()
+q3i()
