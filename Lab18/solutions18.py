@@ -130,23 +130,88 @@ def q08a():
     df = pd.read_csv("../dataset/titanic.csv",encoding = "ISO-8859-1")
 
     # use only columns we're interested in
-    trim_df = df[['Survived']['Sex']]
+    trim_df = df[['Survived','Sex']]
 
     # get boolean for survivors
-    bool_survived = df['Survived']==1
+    bool_survived = trim_df['Survived']==1
 
     # Get rows where people survived
-    males = df[bool_survived].groupby('Sex')
+    df_survivors = trim_df[bool_survived]
+    df_deaths = trim_df[~bool_survived]
+    # Get rows where people survived
+    index = np.arange(1, 3)
+    plt.xticks(index+.1,['Males','Females'])
+    plt.bar(index, df_survivors['Sex'].value_counts(), 0.2, label='Survived', color=['green'])
+    plt.bar(index + 0.2, df_deaths['Sex'].value_counts(), 0.2, label='Died', color=['red'])
+    plt.legend()
+    # plt.legend(['Survived', 'Died'])
+    plt.show()
 
 def q08b():
     """b. Create a bar graph and show the number of males and females in the age
     range [20, 40]"""
+    df = pd.read_csv("../dataset/titanic.csv",encoding = "ISO-8859-1")
+    # use only columns we're interested in
+    trim_df = df[['Age','Sex']]
+    # get boolean for age
+    bool_age = trim_df['Age'].between(20, 40)
+    print(bool_age)
+    df_correct_age = trim_df[bool_age]
+
+    index = np.arange(1,3)
+    plt.xticks(index, ['Male', 'Female'])
+    print(df_correct_age['Sex'].value_counts())
+    width = 1 / len(index)
+    plt.bar(index, df_correct_age['Sex'].value_counts(), width=0.9, color=['blue', 'pink'])
+
+    plt.show()
+
 
 def q08c():
     """c. Use a plot and show the relation between fare and class ticket."""
+    df = pd.read_csv("../dataset/titanic.csv",encoding = "ISO-8859-1")
+    trim_df = df[['Pclass','Fare']]
+    group_pclass = trim_df.groupby('Pclass').mean()
+
+    index = [1, 2, 3]
+
+    plt.bar(index, group_pclass['Fare'])
+    plt.xticks(index, ['first', 'second', 'third'])
+    plt.show()
+
+
+
 
 def q08d():
     """d. Use a pie chart and visualize the population among three different class ticket."""
+    df = pd.read_csv("../dataset/titanic.csv",encoding = "ISO-8859-1")
 
+    pclasses= df['Pclass']
 
-q07()
+    populations = pclasses.value_counts()
+    print(populations.sort_index(ascending=True))
+    labels = ['First', 'Second', 'Third']
+    plt.pie(populations.sort_index(ascending=True), autopct='%1.1f%%', labels = labels)
+
+    # clss = df['Pclass']
+    #
+    # population = clss.value_counts()
+    # print(population)
+    # labels = ['Third', 'First', 'Second']
+    # plt.pie(population, autopct='%1.1f%%', labels=labels)
+
+    plt.show()
+
+def Q8_c():
+    df = pd.read_csv("../dataset/titanic.csv",encoding = "ISO-8859-1")
+    ndf = df[['Pclass', 'Fare']]
+    pclassGroup = ndf.groupby("Pclass").mean()
+
+    print(pclassGroup)
+    index = [1, 2, 3]
+
+    plt.bar(index, pclassGroup['Fare'])
+    plt.xticks(index, ['first', 'second', 'third'])
+    plt.show()
+
+q08d()
