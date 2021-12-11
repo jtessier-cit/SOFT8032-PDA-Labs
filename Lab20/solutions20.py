@@ -2,6 +2,13 @@ import numpy as np
 import pandas as pd
 from sklearn import tree
 
+def group(df, column, threshold):
+    table = df[column].value_counts()
+    grouped_columns = [i for i in table.index if table[i] < threshold]
+    for n in grouped_columns:
+        df.loc[df[column] == n, column] = 'Other'
+    print(df[column].value_counts())
+
 
 def q01():
     """Create a dataset with 400 individuals with three attributes using some random values as follows:
@@ -165,9 +172,241 @@ def q04():
     14. Species
     15. Investigator or Source"""
     print(df.info())
+    print(df.columns)
+    drop_columns = ['Case Number', 'Date', 'Area', 'Location', 'Name', 'Injury', 'Time', 'Species ',
+                    'Investigator or Source', 'pdf', 'href formula', 'href', 'Case Number.1', 'Case Number.2',
+                    'original order']
+    df.drop(drop_columns, axis=1, inplace=True)
+    df.rename(columns={'Sex ': 'Sex'}, inplace=True)
 
+    print(df.columns)
     print(df['Type'].unique())
+    print(df['Sex'].unique())
+    print(df.info())
+    df = df.dropna()
+    df['Age'] = df['Age'].apply(pd.to_numeric, errors='coerce')
+    print(df['Age'].unique())
+    print(df.shape)
+    df = df.dropna()
+    print(df['Age'].unique())
+    print(df['Activity'].value_counts())
+    df.loc[df['Activity'].str.contains('surf', case=False, na=False), 'Activity'] = 'Surfing'
+    df.loc[df['Activity'].str.contains('boarding', case=False, na=False), 'Activity'] = 'Surfing'
+    df.loc[df['Activity'].str.contains('swim', case=False, na=False), 'Activity'] = 'Swimming'
+    df.loc[df['Activity'].str.contains('fishing', case=False, na=False), 'Activity'] = 'Fishing'
+    df.loc[df['Activity'].str.contains('aquarium', case=False, na=False), 'Activity'] = 'Fishing'
+    df.loc[df['Activity'].str.contains('hunt', case=False, na=False), 'Activity'] = 'Fishing'
+    df.loc[df['Activity'].str.contains('trap', case=False, na=False), 'Activity'] = 'Fishing'
+    df.loc[df['Activity'].str.contains('walk', case=False, na=False), 'Activity'] = 'Swimming'
+    df.loc[df['Activity'].str.contains('wading', case=False, na=False), 'Activity'] = 'Swimming'
+    df.loc[df['Activity'].str.contains('float', case=False, na=False), 'Activity'] = 'Swimming'
+    df.loc[df['Activity'].str.contains('Treading water', case=False, na=False), 'Activity'] = 'Swimming'
+    df.loc[df['Activity'].str.contains('pull', case=False, na=False), 'Activity'] = 'Fishing'
+    df.loc[df['Activity'].str.contains('pick', case=False, na=False), 'Activity'] = 'Fishing'
+    df.loc[df['Activity'].str.contains('bath', case=False, na=False), 'Activity'] = 'Swimming'
+    df.loc[df['Activity'].str.contains('diving', case=False, na=False), 'Activity'] = 'Diving'
+    df.loc[df['Activity'].str.contains('snorkel', case=False, na=False), 'Activity'] = 'Diving'
+    df.loc[df['Activity'].str.contains('photo', case=False, na=False), 'Activity'] = 'Photo shoot'
+    df.loc[df['Activity'].str.contains('film', case=False, na=False), 'Activity'] = 'Filming'
+    df.loc[df['Activity'].str.contains('float', case=False, na=False), 'Activity'] = 'Floating'
+    df.loc[df['Activity'].str.contains('boarding', case=False, na=False), 'Activity'] = 'Boarding'
+    df.loc[df['Activity'].str.contains('wash', case=False, na=False), 'Activity'] = 'Washing'
+
+
+    print(df['Activity'].value_counts().to_string())
+
+    df['Sex'] = df['Sex'].str.strip()
+    df = df[df.Sex != 'lli']
+
+    print(df['Sex'].value_counts())
+    df.loc[df['Sex'] == 'M', 'Sex'] = 1
+    df.loc[df['Sex'] == 'F', 'Sex'] = 2
+    print(df['Sex'].value_counts())
+
+    df['Fatal'] = df['Fatal'].str.strip()
+
+    print(df.shape)
+
+    group(df, 'Activity', 4)
     # for i in df.columns:
     #     print(df[i].unique())
+    print(df['Activity'].value_counts().to_string())
 
-q04()
+    print(df.info())
+
+    """
+     Use .astype(str) to make sure all values are treated as string for converstion.
+     """
+    flt = df
+    allActivities = np.unique(flt['Activity'].astype(str))
+
+    dict2 = {}
+    c = 1
+    for ac in allActivities:
+        dict2[ac] = c
+        c = c + 1
+
+    flt['Activity'] = flt['Activity'].map(dict2)
+
+    print(dict2)
+
+    allFatals = np.unique(flt['Fatal'])
+
+    dict1 = {}
+    c = 1
+    for ac in allFatals:
+        dict1[ac] = c
+        c = c + 1
+
+    flt['Fatal'] = flt['Fatal'].map(dict1)
+    print(dict1)
+
+    X = (flt[['Activity', 'Age']])
+
+    y = flt[['Fatal']]
+    # print(np.shape(X), np.shape(y))
+
+    tree_clf = tree.DecisionTreeClassifier()
+    tree_clf.fit(X, y)
+    print(tree_clf.score(X, y))
+    print(df.info())
+
+    X = (flt[['Activity', 'Age']])
+
+    y = flt[['Fatal']]
+    # print(np.shape(X), np.shape(y))
+
+    tree_clf = tree.DecisionTreeClassifier()
+    tree_clf.fit(X, y)
+    print(tree_clf.score(X, y))
+    print(df.info())
+
+def q05a():
+    col_list = ["Age", "Activity", "Fatal"]
+
+    df = pd.read_csv('../dataset/attacks.csv', usecols=col_list, encoding="ISO-8859-1")
+    print(df.head().to_string())
+
+
+    print(df.info())
+
+    print(df.columns)
+    df = df.dropna()
+
+    df['Age'] = df['Age'].apply(pd.to_numeric, errors='coerce')
+
+
+    df = df[df['Age']<50]
+
+    #
+    #
+    # print(df['Activity'].value_counts().to_string())
+
+
+    df['Fatal'] = df['Fatal'].str.strip()
+
+
+    # group(df, 'Activity', 4)
+    # for i in df.columns:
+    #     print(df[i].unique())
+    print(df['Activity'].value_counts().to_string())
+
+    print(df.info())
+
+    """
+     Use .astype(str) to make sure all values are treated as string for converstion.
+     """
+    flt = df
+    allActivities = np.unique(flt['Activity'].astype(str))
+
+    dict2 = {}
+    c = 1
+    for ac in allActivities:
+        dict2[ac] = c
+        c = c + 1
+
+    flt['Activity'] = flt['Activity'].map(dict2)
+
+    print(dict2)
+
+    allFatals = np.unique(flt['Fatal'])
+
+    dict1 = {}
+    c = 1
+    for ac in allFatals:
+        dict1[ac] = c
+        c = c + 1
+
+    flt['Fatal'] = flt['Fatal'].map(dict1)
+    print(dict1)
+
+    X = (flt[['Activity', 'Age']])
+
+    y = flt[['Fatal']]
+    # print(np.shape(X), np.shape(y))
+
+    tree_clf = tree.DecisionTreeClassifier()
+    tree_clf.fit(X, y)
+    print(tree_clf.score(X, y))
+    print(df.info())
+
+    X = (flt[['Activity', 'Age']])
+
+    y = flt[['Fatal']]
+    # print(np.shape(X), np.shape(y))
+
+    tree_clf = tree.DecisionTreeClassifier()
+    tree_clf.fit(X, y)
+    return(tree_clf.score(X, y))
+
+
+def q05b():
+    df = pd.read_csv("../dataset/attacks.csv", encoding="ISO-8859-1")
+
+    flt = df[['Injury', 'Age', 'Fatal']].copy()
+
+    flt['Age'] = flt['Age'].apply(pd.to_numeric, errors='coerce')
+
+    flt = flt[['Injury', 'Age', 'Fatal']].dropna()
+    flt = flt[flt['Age'] < 50]
+    # print(np.shape(flt))
+
+    allActivities = np.unique(flt['Injury'].astype(str))
+    print(df['Injury'].value_counts())
+    dict2 = {}
+    c = 1
+    for ac in allActivities:
+        dict2[ac] = c
+        c = c + 1
+
+    flt['Injury'] = flt['Injury'].map(dict2)
+
+    print(dict2)
+
+    allFatals = np.unique(flt['Fatal'].astype(str))
+
+    dict1 = {}
+    c = 1
+    for ac in allFatals:
+        dict1[ac] = c
+        c = c + 1
+
+    flt['Fatal'] = flt['Fatal'].map(dict1)
+    # print(dict1)
+
+    X = (flt[['Injury', 'Age']])
+
+    y = flt[['Fatal']]
+    # print(np.shape(X), np.shape(y))
+
+    tree_clf = tree.DecisionTreeClassifier()
+    tree_clf.fit(X, y)
+    return tree_clf.score(X, y)
+
+
+
+def q05():
+    print(q05a())
+    print(q05b())
+
+q05()
