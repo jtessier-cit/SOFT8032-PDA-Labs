@@ -50,9 +50,9 @@ def q01():
     # print(feature3)
 
     clf = tree.DecisionTreeClassifier()
-    all_features = pd.concat([feature1, feature2], axis=1)
+    # all_features = pd.concat([feature1, feature2], axis=1)
+    all_features = pd.DataFrame({'feature1': feature1, 'feature2': feature2})
     print(all_features.head(5))
-    # all_features = pd.DataFrame({'feature1': feature1, 'feature2': feature2})
 
     # feature3 = pd.DataFrame({'feature3': feature3})
 
@@ -72,19 +72,20 @@ def q02():
 
     # reduce the dataframe to pclass, gender and survive
     df = df[['Pclass', 'Sex', 'Survived']]
-    print(df.head(5))
+    # print(df.head(5))
 
     """ 
        Approach 1 how to deal with categorical data when the number of
        unique categorical values is small and known to us ...
     
     """
+    # print(df['Sex'].unique())
 
     sex_dict = {'female': 1, 'male': 2}
     df['Sex'] = df['Sex'].map(sex_dict)
     df['Sex'] = df['Sex'].astype(int)
 
-    print(df.head(5))
+    # print(df.head(5))
     # print(df.isna().sum())
 
     # df = df.dropna()
@@ -93,8 +94,8 @@ def q02():
     x = df[['Pclass', 'Sex']]
     y = df[['Survived']]
 
-    print(x.head())
-    print(y.head())
+    # print(x.head())
+    # print(y.head())
     """ 
     Approach 2 how to deal with categorical data . where we can 
     use conditionas e.g., only chanege cells with values 'male' 
@@ -140,16 +141,39 @@ def q03():
     y = df[['Survived']]
 
     tree_clf = tree.DecisionTreeClassifier(random_state=42)
-    tree_clf.fit(X, y)
+    tree_clf.fit(X.values, y)
     print(tree_clf.score(X, y))
+
+    for p in [1, 2, 3]:
+        for a in range(0,100,5):
+            print(f"pClass: {p}, age: {a}, {tree_clf.predict([[p, a]])}")
+            # print(clf.predict([[10, 110]]))
+
+
+    importance = tree_clf.feature_importances_
+    # summarize feature importance
+    for i, v in enumerate(importance):
+        print('Feature: %0d, Score: %.5f' % (i, v))
+
 
     # for Pclass , Age, Sex
     X = df[['Pclass', 'Age', 'Sex']]
     y = df[['Survived']]
 
     tree_clf = tree.DecisionTreeClassifier(random_state=42)
-    tree_clf.fit(X, y)
+    tree_clf.fit(X.values, y)
     print(tree_clf.score(X, y))
+
+    for p in [1, 2, 3]:
+        for a in range(0,100,5):
+            for s in [1, 2]:
+                print(f"pClass: {p}, age: {a}, sex: {s} {tree_clf.predict([[p, a, s]])}")
+
+    importance = tree_clf.feature_importances_
+    # summarize feature importance
+    for i, v in enumerate(importance):
+        print('Feature: %0d, Score: %.5f' % (i, v))
+
 
 def q04():
     df = pd.read_csv('../dataset/attacks.csv', encoding="ISO-8859-1")
@@ -223,7 +247,6 @@ def q04():
     df.loc[df['Sex'] == 'F', 'Sex'] = 2
     print(df['Sex'].value_counts())
 
-    df['Fatal'] = df['Fatal'].str.strip()
 
     print(df.shape)
 
@@ -269,9 +292,14 @@ def q04():
     tree_clf = tree.DecisionTreeClassifier()
     tree_clf.fit(X, y)
     print(tree_clf.score(X, y))
-    print(df.info())
+    # print(df.info())
 
-    X = (flt[['Activity', 'Age']])
+    importance = tree_clf.feature_importances_
+    # summarize feature importance
+    for i, v in enumerate(importance):
+        print('Feature: %0d, Score: %.5f' % (i, v))
+
+    X = (flt[['Activity', 'Age', 'Sex']])
 
     y = flt[['Fatal']]
     # print(np.shape(X), np.shape(y))
@@ -279,7 +307,13 @@ def q04():
     tree_clf = tree.DecisionTreeClassifier()
     tree_clf.fit(X, y)
     print(tree_clf.score(X, y))
-    print(df.info())
+    # print(df.info())
+
+    importance = tree_clf.feature_importances_
+    # summarize feature importance
+    for i, v in enumerate(importance):
+        print('Feature: %0d, Score: %.5f' % (i, v))
+
 
 def q05a():
     col_list = ["Age", "Activity", "Fatal"]
@@ -304,6 +338,7 @@ def q05a():
 
 
     df['Fatal'] = df['Fatal'].str.strip()
+    df['Fatal'] = df['Fatal'].str.lower()
 
 
     # group(df, 'Activity', 4)
@@ -347,8 +382,8 @@ def q05a():
 
     tree_clf = tree.DecisionTreeClassifier()
     tree_clf.fit(X, y)
-    print(tree_clf.score(X, y))
-    print(df.info())
+    # print(tree_clf.score(X, y))
+    # print(df.info())
 
     X = (flt[['Activity', 'Age']])
 
@@ -372,7 +407,7 @@ def q05b():
     # print(np.shape(flt))
 
     allActivities = np.unique(flt['Injury'].astype(str))
-    print(df['Injury'].value_counts())
+    # print(df['Injury'].value_counts())
     dict2 = {}
     c = 1
     for ac in allActivities:
@@ -381,7 +416,7 @@ def q05b():
 
     flt['Injury'] = flt['Injury'].map(dict2)
 
-    print(dict2)
+    # print(dict2)
 
     allFatals = np.unique(flt['Fatal'].astype(str))
 
